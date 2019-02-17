@@ -1,4 +1,4 @@
-#Calculator
+#Calculator#
 
 This is a simple calculator, which uses the Shunting Yard Algorithm to convert an infix expression into Reverse Polish Notation. From there the expression is evaluated.
 

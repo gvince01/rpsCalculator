@@ -34,7 +34,7 @@ class ReversePolishLogicTest extends FunSuite with ReversePolishLogic {
     assert(result == List(2.0))
   }
 
-  test("calculate test 1") {
+  test("evaluateReversePolishInput Test 1") {
     val input = "3 5 + 7 2 - *"
     val inputArr = input.split(" ").toList
     val result = evaluateReversePolishInput(inputArr)
@@ -42,7 +42,7 @@ class ReversePolishLogicTest extends FunSuite with ReversePolishLogic {
     assert(result == 40.0)
   }
 
-  test("Caclculation Test 2") {
+  test("evaluateReversePolishInput Test 2") {
     val input = "3 2 * 11 -"
     val inputArr = input.split(" ").toList
     val result = evaluateReversePolishInput(inputArr)
