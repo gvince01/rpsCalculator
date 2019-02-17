@@ -1,16 +1,24 @@
 
 
-class ReversePolishLogic {
+trait ReversePolishLogic {
 
   /**
-   * Checks the input is in a usable format,
-   * e.g "1 + 2"
-   * and not containing a-z or unrecognised operators
-   *
-   * @return Optionally returns an error message to display to the user
+   * Given an expression in reverse polish notation, evaluates it and returns the result
+   * @param inputList
+   * @return
    */
-  def inputSanityCheck(inputStr: String): Option[List[String]] = {
-    Option(inputStr.split(" ").toList)
+  def evaluateReversePolishInput(inputList: List[String]): Double = {
+    def helper(inputList: List[String], stack: List[Double]): Double = {
+      inputList match {
+        // Don't actually need a sum here, the stack should contain just one element
+        case _ if inputList.isEmpty => stack.sum
+
+        case command :: xs =>
+          helper(xs, reversePolishExecutionHelper(stack, command))
+      }
+    }
+
+    helper(inputList, List.empty)
   }
 
 
@@ -26,28 +34,8 @@ class ReversePolishLogic {
         case "*" => operators.Multiply(y, x) :: xs
         case "/" => operators.Divide(y, x) :: xs
         case "-" => operators.Minus(y, x) :: xs
-        case "^" => operators.Power(y, x) :: xs
         case _ => input.toDouble :: data
       }
-    }
-  }
-
-  def helper(inputList: List[String], stack: List[Double]): Double = {
-    inputList match {
-      case _ if inputList.isEmpty => stack.sum
-
-      case command :: xs =>
-        helper(xs, reversePolishExecutionHelper(stack, command))
-    }
-  }
-
-  def calculate(input: String): Double = {
-    inputSanityCheck(input) match {
-      case None =>
-        0.0
-
-      case Some(inputList) =>
-        helper(inputList, List.empty)
     }
   }
 }
