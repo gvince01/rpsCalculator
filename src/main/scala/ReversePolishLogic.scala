@@ -4,8 +4,6 @@ trait ReversePolishLogic {
 
   /**
    * Given an expression in reverse polish notation, evaluates it and returns the result
-   * @param inputList
-   * @return
    */
   def evaluateReversePolishInput(inputList: List[String]): Double = {
     def helper(inputList: List[String], stack: List[Double]): Double = {
@@ -26,7 +24,7 @@ trait ReversePolishLogic {
    * Given a input, that can be either an operator or a number,
    * apply the correct operation and return a new list
    */
-  def reversePolishExecutionHelper(data: List[Double], input: String): List[Double] = {
+  protected def reversePolishExecutionHelper(data: List[Double], input: String): List[Double] = {
     data match {
       case List(_) | Nil => input.toDouble :: data
       case x::y::xs => input match {

@@ -16,29 +16,32 @@ class Main extends InfixUtils with ReversePolishLogic {
     println("The use of brackets is also allowed.")
   }
 
-  def run(): Unit = {
+  /**
+   * Main "driver"
+   */
+  def runCalculator(): Unit = {
     try {
       val userInput = scala.io.StdIn.readLine("Enter your query: ")
 
+      // Check there aren't any unexpected characters
       inputSanityCheck(userInput) match {
-        case None =>
-          println("Hmm... I don't recognise some of these characters, would you like to try again?")
-          run()
+        case (None, desc) =>
+          println("Hmm... $desc, please try again?")
+          runCalculator()
 
-        case Some(inputArr) =>
+        case (Some(inputLst), _) =>
           // Convert the infix into reverse polish, and then evaluate
-          val reversePolishNotationArray = convertFromInfixToReversePolish(inputArr)
+          val reversePolishNotationArray = convertFromInfixToReversePolish(inputLst)
           val expressionResult = evaluateReversePolishInput(reversePolishNotationArray)
 
           println(s"Result = $expressionResult")
-          runAgain()
 
           def runAgain(): Unit = {
             val userInput = scala.io.StdIn.readLine("Would you like to use the calculator again? (Y/N) ")
 
             userInput.toLowerCase match {
               case "y" | "yes" =>
-                run()
+                runCalculator()
 
               case "n" | "no" =>
                 println("Goodbye!")
@@ -48,31 +51,40 @@ class Main extends InfixUtils with ReversePolishLogic {
                 runAgain()
             }
           }
+          runAgain()
       }
     } catch {
       case NonFatal(e) =>
         println(s"Something went wrong... ${e.getMessage}")
-        run()
+        runCalculator()
     }
   }
 
   /**
-   * Checks the input is in a usable format
+   * Checks the input is in a usable format, and returns a desc is there was an error
    *
    */
-  def inputSanityCheck(userInputStr: String): Option[List[String]] = {
-    val inputLst = userInputStr.split(" ").toList
+  def inputSanityCheck(userInputStr: String): (Option[List[String]], String) = {
+    try {
+      val inputLst = userInputStr.split(" ").toList
 
-    // ensure that either a) the character is a digit or its a valid operand
-    val validInput = inputLst.forall(_.forall(char => char.isDigit || InfixUtils.operandToPrecedenceMap.contains(char.toString)))
+      // ensure that either a) the character is a digit or its a valid operand
+      val validInput = inputLst.forall(_.forall(char => char.isDigit || InfixUtils.operandToPrecedenceMap.contains(char.toString)))
 
-    if (!validInput) {
-      None
-    } else {
-      Option(inputLst)
+      if (!validInput) {
+        (None, "I don't recognise some of these characters")
+
+      } else {
+        (Option(inputLst), "")
+      }
+      
+    } catch {
+      case NonFatal(e) =>
+        // normally log this
+        (None, "Did you separate each operand/operator with a space?")
     }
   }
-  
+
 }
 
 
@@ -80,7 +92,6 @@ object Main extends App {
 
   val main = new Main
   main.welcome()
-  main.run()
-
-
+  main.runCalculator()
+  
 }

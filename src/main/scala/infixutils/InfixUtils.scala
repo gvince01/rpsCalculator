@@ -59,15 +59,6 @@ trait InfixUtils {
 }
 
 object InfixUtils {
-  val operandToPrecedenceMap: Map[String, Int] = Map(
-    "+" -> 0,
-    "-" -> 0,
-    "*" -> 1,
-    "/" -> 1,
-    "(" -> -1,
-    ")" -> -1
-  )
-
   def shouldPopToken(op1: String, stack: List[String]): List[String] = {
     if (stack.isEmpty) List.empty else {
       // TODO check that the map contains the element
@@ -83,4 +74,12 @@ object InfixUtils {
 
   def isOperator(inputToken: String): Boolean = operandToPrecedenceMap.contains(inputToken)
 
+  val operandToPrecedenceMap: Map[String, Int] = Map(
+    "+" -> 0,
+    "-" -> 0,
+    "*" -> 1,
+    "/" -> 1,
+    "(" -> -1,
+    ")" -> -1
+  )
 }
