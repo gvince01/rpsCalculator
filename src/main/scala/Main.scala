@@ -22,10 +22,11 @@ class Main extends InfixUtils with ReversePolishLogic {
 
       inputSanityCheck(userInput) match {
         case None =>
-          println("Hmm... Something went wrong, would you like to try again?")
+          println("Hmm... I don't recognise some of these characters, would you like to try again?")
           run()
 
         case Some(inputArr) =>
+          // Convert the infix into reverse polish, and then evaluate
           val reversePolishNotationArray = convertFromInfixToReversePolish(inputArr)
           val expressionResult = evaluateReversePolishInput(reversePolishNotationArray)
 
@@ -49,7 +50,6 @@ class Main extends InfixUtils with ReversePolishLogic {
           }
       }
     } catch {
-
       case NonFatal(e) =>
         println(s"Something went wrong... ${e.getMessage}")
         run()
@@ -57,15 +57,20 @@ class Main extends InfixUtils with ReversePolishLogic {
   }
 
   /**
-   * Checks the input is in a usable format,
-   * e.g "1 + 2"
-   * and not containing a-z or unrecognised operators
+   * Checks the input is in a usable format
    *
-   * @return Optionally returns an error message to display to the user
    */
-  def inputSanityCheck(inputStr: String): Option[List[String]] = {
-    
-    Option(inputStr.split(" ").toList)
+  def inputSanityCheck(userInputStr: String): Option[List[String]] = {
+    val inputLst = userInputStr.split(" ").toList
+
+    // ensure that either a) the character is a digit or its a valid operand
+    val validInput = inputLst.forall(_.forall(char => char.isDigit || InfixUtils.operandToPrecedenceMap.contains(char.toString)))
+
+    if (!validInput) {
+      None
+    } else {
+      Option(inputLst)
+    }
   }
   
 }
