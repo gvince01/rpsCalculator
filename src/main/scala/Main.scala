@@ -25,11 +25,11 @@ class Main extends InfixUtils with ReversePolishLogic {
 
       // Check there aren't any unexpected characters
       inputSanityCheck(userInput) match {
-        case (None, desc) =>
-          println("Hmm... $desc, please try again?")
+        case Left(desc) =>
+          println(s"Hmm... $desc, please try again?")
           runCalculator()
 
-        case (Some(inputLst), _) =>
+        case Right(inputLst) =>
           // Convert the infix into reverse polish, and then evaluate
           val reversePolishNotationArray = convertFromInfixToReversePolish(inputLst)
           val expressionResult = evaluateReversePolishInput(reversePolishNotationArray)
@@ -55,16 +55,18 @@ class Main extends InfixUtils with ReversePolishLogic {
       }
     } catch {
       case NonFatal(e) =>
-        println(s"Something went wrong... ${e.getMessage}")
+        println(s"Something went wrong. Did you seperate all operators/operands with spaces?")
         runCalculator()
     }
   }
 
   /**
-   * Checks the input is in a usable format, and returns a desc is there was an error
+   * Checks the input is in a usable format, i.e.
+   * Contains only 0-9 and valid operators
    *
+   * @return Either a Left of an error description or a right of the inputlist
    */
-  def inputSanityCheck(userInputStr: String): (Option[List[String]], String) = {
+  def inputSanityCheck(userInputStr: String): Either[String, List[String]] = {
     try {
       val inputLst = userInputStr.split(" ").toList
 
@@ -72,16 +74,17 @@ class Main extends InfixUtils with ReversePolishLogic {
       val validInput = inputLst.forall(_.forall(char => char.isDigit || InfixUtils.operandToPrecedenceMap.contains(char.toString)))
 
       if (!validInput) {
-        (None, "I don't recognise some of these characters")
+        Left("I don't recognise some of these characters")
 
       } else {
-        (Option(inputLst), "")
+        Right(inputLst)
       }
       
     } catch {
       case NonFatal(e) =>
+        println(e)
         // normally log this
-        (None, "Did you separate each operand/operator with a space?")
+        Left("Did you separate each operand/operator with a space?")
     }
   }
 
